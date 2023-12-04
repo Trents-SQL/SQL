@@ -1,0 +1,105 @@
+#This analysis utilized the following Movie Celebrities dataset which I personally created:
+
+CREATE table movie_celebrities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fullname TEXT,
+    age INTEGER);
+    INSERT INTO movie_celebrities (fullname, age) VALUES ( "Hugh Jackman", "55");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Ryan Renolds", "47");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Josh Hutcherson", "31");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Lindsay Lohan", "37");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Jamie Lee Curtis", "65");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Jennifer Lawrence", "33");
+    INSERT INTO movie_celebrities (fullname,age) VALUES ("Johnny Depp","60");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Jenna Ortega","21");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Sandra Bullock","59");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Nicolas Cage","59");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Angelina Jolie","48");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Cameron Diaz","51");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Chris Pratt","44");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Emma Stone","35");
+    INSERT INTO movie_celebrities (fullname, age) VALUES ("Viola Davis","58");
+    
+CREATE table movies (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    person_id INTEGER,
+    movie TEXT);
+    INSERT INTO movies (person_id, movie) VALUES ("1", "Wolverine");
+    INSERT INTO movies (person_id, movie) VALUES ("1","The Greatest Showman");
+    INSERT INTO movies (person_id, movie) VALUES ("2","Free Guy");
+    INSERT INTO movies (person_id, movie) VALUES ("2","Deadpool");
+    INSERT INTO movies (person_id, movie) VALUES ("3","Hunger Games");
+    INSERT INTO movies (person_id, movie) VALUES ("3","Five Nights at Freddys");
+    INSERT INTO movies (person_id, movie) VALUES ("4","Freaky Friday");
+    INSERT INTO movies (person_id, movie) VALUES ("4","Mean Girls");
+    INSERT INTO movies (person_id, movie) VALUES ("5","Halloween");
+    INSERT INTO movies (person_id, movie) VALUES ("5","Everything Everywhere All At Once");
+    INSERT INTO movies (person_id, movie) VALUES ("6","Joy");
+    INSERT INTO movies (person_id, movie) VALUES ("6","No Hard Feelings");
+    INSERT INTO movies (person_id, movie) VALUES ("7","Pirates of the caribbean");
+    INSERT INTO movies (person_id, movie) VALUES ("7","Sweeney Todd");
+    INSERT INTO movies (person_id, movie) VALUES ("8","Scream");
+    INSERT INTO movies (person_id, movie) VALUES ("8","X");
+    INSERT INTO movies (person_id, movie) VALUES ("9","Oceans 8");
+    INSERT INTO movies (person_id, movie) VALUES ("9","Bird Box");
+    INSERT INTO movies (person_id, movie) VALUES ("10","National Treasure");
+    INSERT INTO movies (person_id, movie) VALUES ("10","Gone in 60 Seconds");
+    INSERT INTO movies (person_id, movie) VALUES ("11","Maleficent");
+    INSERT INTO movies (person_id, movie) VALUES ("11","Laura Croft: Tomb Raider");
+    INSERT INTO movies (person_id, movie) VALUES ("12","Bad Teacher");
+    INSERT INTO movies (person_id, movie) VALUES ("12","Shrek");
+    INSERT INTO movies (person_id, movie) VALUES ("13","Guardians of The Galaxy");
+    INSERT INTO movies (person_id, movie) VALUES ("13","Mario");
+    INSERT INTO movies (person_id, movie) VALUES ("14","Easy A");
+    INSERT INTO movies (person_id, movie) VALUES ("14","Zombieland");
+    INSERT INTO movies (person_id, movie) VALUES ("15","The Help");
+    INSERT INTO movies (person_id, movie) VALUES ("15","Madea Goes to Jail");
+    
+CREATE table spouse (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fullname TEXT,
+    age INTEGER);
+    INSERT INTO spouse (fullname, age) VALUES ("Divorced","NULL");
+    INSERT INTO spouse (fullname, age) VALUES ("Blake Lively","36");
+    INSERT INTO spouse (fullname, age) VALUES ("Claudia Traisac","30");
+    INSERT INTO spouse (fullname, age) VALUES ("Bader Shammas","36");
+    INSERT INTO spouse (fullname, age) VALUES ("Christopher Guest","75");
+    INSERT INTO spouse (fullname, age) VALUES ("Cooke Maroney","37");
+    INSERT INTO spouse (fullname, age) VALUES ("Divorced","NULL");
+    INSERT INTO spouse (fullname, age) VALUES ("Single","NULL");
+    INSERT INTO spouse (fullname, age) VALUES ("Divorced","NULL");
+    INSERT INTO spouse (fullname, age) VALUES ("Riko Shibata","28");
+    INSERT INTO spouse (fullname, age) VALUES ("Divorced","NULL");
+    INSERT INTO spouse (fullname, age) VALUES ("Benji Madden","44");
+    INSERT INTO spouse (fullname, age) VALUES ("Katherine Schwarzenegger","33");
+    INSERT INTO spouse (fullname, age) VALUES ("Dave McCary","38");
+    INSERT INTO spouse (fullname, age) VALUES ("Julius Tennon","69");
+
+#Which movie star was in each movie with their age now.
+Select movie, fullname as movie_star_name, age
+from movie_celebrities
+join movies
+on person_id = movie_celebrities.id;
+
+#What is the spouses name of each star with the age of each star and their spouse.
+Select movie_celebrities.fullname as star_name, spouse.fullname as spouse_name, movie_celebrities.age as star_age, spouse.age as spouse_age
+from movie_celebrities
+join spouse
+on spouse.id = movie_celebrities.id;
+
+#Which movies have a celebrity that is in a relationship with the stars name and their spouses name.
+Select movie, movie_celebrities.fullname as star_name, spouse.fullname as spouse_name
+from movies
+join movie_celebrities
+on movies.person_id = movie_celebrities.id
+join spouse
+on movie_celebrities.id = spouse.id
+WHERE NOT spouse.age ="NULL";
+
+#What are the celebrities and their spouses names and ages with how big the age gaps are for celebrities in a relationship.
+Select movie_celebrities.fullname as star_name, spouse.fullname as spouse_name, movie_celebrities.age as star_age, spouse.age as spouse_age, ABS(movie_celebrities.age - spouse.age) as age_gap_years
+from movie_celebrities
+join spouse
+on movie_celebrities.id = spouse.id
+WHERE NOT spouse.age = "NULL"
+order by age_gap_years;
