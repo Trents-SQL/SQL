@@ -27,3 +27,75 @@ time_signature integer NOT NULL
 #Then I inserted the Spotify Data .csv into the table.
 
 #Next, I explored the data using the following SQL.
+Select *
+from BIT_DB.Spotifydata;
+
+#Who are the top 10 artists based on popularity?
+select artist_name
+from BIT_DB.Spotifydata
+order by popularity desc
+limit 10;
+
+#What is the average danceability by artist and track?
+select artist_name, track_name, avg(danceability) as avg_dance
+from BIT_DB.Spotifydata
+group by artist_name, track_name
+order by avg_dance DESC;
+
+#What is the average danceability of the top 10 most popular songs?
+Select avg(danceability) as top_ten_avg_dance
+from
+(select *
+from Spotifydata
+order by popularity DESC
+limit 10);
+
+#What is the avergae loudness of the songd on the list?
+Select avg(loudness) as avg_loudness
+from BIT_DB.Spotifydata
+order by avg_loudness;
+
+#Which songs are louder than the average loudness of the list?
+select artist_name, track_name, loudness
+from BIT_DB.Spotifydata
+where loudness > (select avg(loudness)
+from BIT_DB.Spotifydata)
+order by loudness desc;
+
+#Which songs are the top 10 longest?
+select artist_name, track_name, duration_ms
+from BIT_DB.Spotifydata
+order by duration_ms desc
+limit 10;
+
+#What is the longest song of the top 10 most popular?
+select artist_name, track_name, duration_ms
+from (select * from Spotifydata
+order by popularity desc limit 10)
+order by duration_ms desc
+limit 1;
+
+#What are the top 10 songs with the most energy?
+Select artist_name, track_name, energy
+from BIT_DB.Spotifydata
+order by energy desc
+limit 10;
+
+#Which top 10 songs have the most energy and are highly popular?
+Select artist_name, track_name, energy
+from BIT_DB.Spotifydata
+where popularity > 90
+order by energy desc
+limit 10;
+
+#Calculate the average popularity for the artists in the Spotify data table. 
+#Then, for every artist with an average popularity of 90 or above, show their name, their average popularity, and label them as a “Top Star”.
+with popularity_avg_CTE as (
+select s.artist_name, avg(s.popularity) as avg_popularity
+from Spotifydata s
+group by s.artist_name)
+select * ,
+"Top Star" as tag
+from popularity_avg_CTE
+where avg_popularity >=90
+order by avg_popularity desc;
