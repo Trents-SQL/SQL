@@ -50,7 +50,7 @@ from Spotifydata
 order by popularity DESC
 limit 10);
 
-#What is the avergae loudness of the songd on the list?
+#What is the average loudness of the songs on the list?
 Select avg(loudness) as avg_loudness
 from BIT_DB.Spotifydata
 order by avg_loudness;
