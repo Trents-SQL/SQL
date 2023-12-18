@@ -36,10 +36,10 @@ from BIT_DB.Spotifydata
 order by popularity desc
 limit 10;
 
-#What is the average danceability by artist and track?
-select artist_name, track_name, avg(danceability) as avg_dance
+#What is the average danceability by artist?
+select artist_name, avg(danceability) as avg_dance
 from BIT_DB.Spotifydata
-group by artist_name, track_name
+group by artist_name
 order by avg_dance DESC;
 
 #What is the average danceability of the top 10 most popular songs?
