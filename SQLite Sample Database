@@ -1,0 +1,65 @@
+#For this project I used a sample database with mutiple tables located at https://www.sqlitetutorial.net/sqlite-sample-database/
+
+#1.How many invoices are associated with each sales rep?
+Select emp.FirstName, emp.LastName, count(inv.InvoiceId) as LifeTimeSold
+from chinook.employees emp
+join chinook.customers cust
+on emp.EmployeeId = cust.SupportRepId
+join chinook.invoices inv
+on cust.CustomerId = inv.CustomerId
+group by emp.EmployeeId;
+
+#2.How much money has each sales rep made in total?
+Select emp.FirstName, emp.LastName, SUM(inv.Total) as LifeTimeRevenue
+from chinook.employees emp
+join chinook.customers cust
+on emp.EmployeeId = cust.SupportRepId
+join chinook.invoices inv
+on cust.CustomerId = inv.CustomerId
+group by emp.EmployeeId;
+
+#3.Which albums did each customer purchased tracks from? Keep everything in one row for each customer.
+select FirstName,LastName,
+GROUP_CONCAT(Title, ', ') AS PurchasedAlbums
+from (
+select cust.FirstName, cust.LastName, alb.Title
+from chinook.customers cust
+left join chinook.invoices inv 
+    ON cust.CustomerId = inv.CustomerId
+inner join chinook.invoice_items initem 
+    ON inv.InvoiceId = initem.InvoiceId
+left join chinook.tracks track 
+    ON initem.TrackId = track.TrackId
+right join chinook.albums alb 
+    ON track.AlbumId = alb.AlbumId
+where cust.FirstName != "NULL"
+group by cust.CustomerId, cust.FirstName, cust.LastName, alb.Title
+) AS subquery
+group by FirstName, LastName;
+
+#4.How many items did each customer purchased, how many transactions did they have and what was the total spent for it all?
+select cust.FirstName,cust.LastName,(
+        select SUM(ii.Quantity)
+        from chinook.invoices inv
+        join chinook.invoice_items ii 
+        on inv.InvoiceId = ii.InvoiceId
+        where cust.CustomerId = inv.CustomerId
+    ) AS TotalQuantityPurchased,
+COUNT(DISTINCT inv.InvoiceId) AS NumberOfInvoices, SUM(inv.Total) AS TotalAmountSpent
+from chinook.customers cust
+join chinook.invoices inv ON cust.CustomerId = inv.CustomerId
+group by cust.CustomerId;
+
+#5.Which sales agent is associated with each invoice?
+Select emp.FirstName, emp.LastName, inv.InvoiceId
+from chinook.employees emp
+join chinook.customers cust
+on emp.EmployeeId = cust.SupportrepId
+join chinook.invoices inv
+on cust.CustomerId = inv.CustomerId
+order by emp.LastName;
+
+#6.What were the total sales for 2009?
+select SUM(Total) as TotalSales_2009
+from chinook.invoices
+where InvoiceDate like '2009%';
